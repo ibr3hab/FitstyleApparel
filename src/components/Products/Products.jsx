@@ -77,25 +77,20 @@ const Products =()=>{
     
     } 
 
-
-
-
-
+   
     const descriptionVisible = (id)=>{
-
       setiSDescription((prevValue)=>({
-       ...prevValue,
-       [id] :!prevValue[id]
-      }))  
+        ...prevValue , 
+        [id] : !prevValue[id]
+      }))
     }
 
     const countCart = (id)=>{
-      setCount((prevCount)=>({
-        ...prevCount,
-        [id] :prevCount[id] ? prevCount[id] + 1 : 1,
+      setCount((prevValue)=>({
+        ...prevValue , 
+        [id] : prevValue[id] ? prevValue[id] + 1 : 1,
       }))
     }
-    
     const handlePaginated = (event ,value)=>{
       setPage(value);
     }

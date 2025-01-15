@@ -9,16 +9,16 @@ const UserProfile = ()=>{
 
 
     const [userProfile , setUserProfile] = useState({
-        fullname : '',
+        fullName : '',
         age : '' ,
         nationality : '',
         sex : '',
     })
     const [userCard , setUserCard ] = useState([]);
-    const [imagePreview , setImagePreview] = useState(null);
+    // const [imagePreview , setImagePreview] = useState(null);
     
 
-     
+
     const fetchProducts = async()=>{
     try{
         const response = await fetch('/api/userProfile' , {
@@ -30,15 +30,20 @@ const UserProfile = ()=>{
             throw new Error("Error fetching the data");
         }
         const data = await response.json();
-        setUserCard(data.map((user)=>({...user , image : user.imageURL})))
+        console.log("The output",data); 
+        setUserCard(data);
     }catch(err){
         console.error("Error getting the data of the of the users");
     }
    }
 
+ 
+
    useEffect(()=>{
     fetchProducts();
    },[])
+
+  
 
     const handleChange = (e)=>{
            const {name , value} = e.target;
@@ -49,65 +54,67 @@ const UserProfile = ()=>{
     }
     
 
-    const handleSubmit = async (e)=>{
-     
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const response = await fetch('/api/userProfile',{
-                method : 'POST',
-                headers : {
-                    'Content-Type' : 'application/json' , 
-                    'Authorization' : `Bearer ${localStorage.getItem('token')}`
+        try {
+            // Send the user profile data to the backend without the image part
+            const response = await fetch('/api/userProfile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
                 body: JSON.stringify({
-                    userProfile: {
-                        fullName: userProfile.fullname,  
-                        age: userProfile.age,           
-                        nationality: userProfile.nationality,
-                        sex: userProfile.sex
-                    },
-                    imageURL : imagePreview                     
-                })
-            })
-            if(!response.ok){
-                throw new Error("Error adding the data to the userProfile")
+                    fullName: userProfile.fullName,
+                    age: userProfile.age,
+                    nationality: userProfile.nationality,
+                    sex: userProfile.sex,
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Error adding the data to the userProfile');
             }
 
-        }finally{
-        setUserProfile({
-            fullname : '',
-            age : '' ,
-            nationality : '',
-            sex : '',
-        })
-        setImagePreview(null);
-        
-    }}
 
-    const handleImage = (e)=>{
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                console.log('Base64 Image:', reader.result); // Debug: Check the Base64 string
-                setImagePreview(reader.result); // Set the Base64 string as `imagePreview`
-            };
-            reader.readAsDataURL(file); // Converts file to Base64
+            fetchProducts();
+    
+        }  
+        finally {
+            // Reset the form fields after submission
+            setUserProfile({
+                fullName: '',
+                age: '',
+                nationality: '',
+                sex: '',
+            });
         }
+    };
+    
 
-    }
+    // const handleImage = (e)=>{
+    //     const file = e.target.files[0];
+    //     if(file){
+    //         const url = URL.createObjectURL(file);
+    //         console.log('Image Preview URL:', url); // Debug: Check the generated preview URL
+    //         setImagePreview(url);
+    //     }
+
+    // }
 
 
     return (
         <div>
+
+            { userCard.length === 0 ? (
               <div className="userForm">
                 <form onSubmit={handleSubmit}>
                   <FormControl>
                     <InputLabel>Name</InputLabel>
                     <OutlinedInput
                       type="text"
-                      name="fullname"
-                      value={userProfile.fullname}
+                      name="fullName"
+                      value={userProfile.fullName}
                       onChange={handleChange}
                       required
                     />
@@ -132,9 +139,9 @@ const UserProfile = ()=>{
                       required
                     />
                   </FormControl>
-                  <FormControl>
+                  {/* <FormControl>
                     <Input type="file" accept="image/*" onChange={handleImage} />
-                  </FormControl>
+                  </FormControl> */}
                   <FormControl>
                     <Select value={userProfile.sex} onChange={handleChange} name="sex">
                       <InputLabel>Sex</InputLabel>
@@ -145,19 +152,21 @@ const UserProfile = ()=>{
                   </FormControl>
                   <Button type="submit">Create Profile</Button>
                 </form>
-              </div>
-        
+              </div> ) : (
+             <div className="contUser">
             {userCard.map((user) => (
               <div className="userCard" key={user.userId}>
                 <PersonIcon />
-                {user.image && <img src={user.image} alt={user.fullname} />}
-                <Typography variant="subtitle1">Full Name: {user.fullname}</Typography>
+                {/* {user.image && <img src={user.image} alt={user.fullname} />} */}
+                <Typography variant="subtitle1">Full Name: {user.fullName}</Typography>
                 <Typography variant="subtitle1">Age: {user.age}</Typography>
                 <Typography variant="subtitle1">Nationality: {user.nationality}</Typography>
                 <Typography variant="subtitle1">Sex: {user.sex}</Typography>
               </div>
             ))
         }
+        </div>)
+}
         </div>
       );
 }

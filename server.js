@@ -244,22 +244,21 @@ app.put('/api/cart/:productId' , verifyToken , (req , res)=>{
    })
 })
 
-app.post('/api/userProfile', verifyToken , (req,res)=>{
-
-    const {fullName , age , sex, nationality, imageURL}  = req.body;
+app.post('/api/userProfile', verifyToken, (req, res) => {
+    const { fullName, age, sex, nationality } = req.body;
     console.log(req.body);
 
-    const query = 'INSERT into userProfile (req.userId , fullName , age , sex, nationality , imageURL) VALUES (?,?,?,?,?,?)'
-
-    db.query(query,[req.userId , fullName , age , sex , nationality ,  imageURL],(err , result)=>{
-        if(err){
-            res.status(500).json({error : "Error posting the user details"})
-            return
+    // Insert user profile data into the database without the imageURL
+    const query = 'INSERT INTO userProfile (userId, fullName, age, sex, nationality) VALUES (?, ?, ?, ?, ?)';
+    db.query(query, [req.userId, fullName, age, sex, nationality], (err, result) => {
+        if (err) {
+            res.status(500).json({ error: 'Error posting the user details' });
+            return;
         }
-        
-        res.status(201).json({userId : req.userId , fullName , age , sex , nationality , imageURL})
-    })
-})
+        res.status(201).json({ userId: req.userId, fullName, age, sex, nationality });
+    });
+});
+
 
 app.get('/api/userProfile' , verifyToken , (req,res)=>{
 
@@ -273,31 +272,6 @@ app.get('/api/userProfile' , verifyToken , (req,res)=>{
         res.json(result);
     })
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 app.listen(port ,()=>{

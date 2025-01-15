@@ -18,15 +18,11 @@ const Cart = ()=>{
 
 
   useEffect(()=>{
- const initialCount  = cart.reduce((sum , item)=>{
+ const initialCount  = cart.reduce((sum , item)=>{  //For each item in the cart : item.productId becomes the key in the sum object and item.quantity is set as the value of it 
     sum[item.productId] = item.quantity;
     return sum},{})
 
     setCount(initialCount);
-
-
-
-
 },[cart])
 
   const minusCount = (productId)=>{
@@ -58,13 +54,14 @@ const Cart = ()=>{
         }finally{
             setLoading(false)
         }
-        fetchData();
+        
     }
+    fetchData();
     },[])  
 
 
 
-      if (loading) {
+    if (loading) {
                 return (
                   <div
                   style={{
