@@ -3,6 +3,8 @@ import mysql from 'mysql2';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import path from 'path';
 
 
 
@@ -10,8 +12,26 @@ const app = express();
 const port = process.env.PORT || 5000;
 const JWT_SECRET = 'supersecretkey$12345!jwt_secret';
 
+
+
+
 app.use(cors());
 app.use(express.json());
+app.use('/uploads',express.static('uploads'));
+
+const storage = multer.diskStorage({  //Configuring multer to store the files in a specific location using destination callback
+    destination : (req, file , cb)=>{
+        cb(null , 'uploads/') // save the files in the uploads directory
+    },
+    filename: (req,file,cb)=>{
+        cb(null ,Date.now() + path.extname(file.originalname)) // save with the unique filename 
+    }
+})
+
+const upload = multer({storage : storage})
+
+
+
 
 
 const db = mysql.createConnection({ // This creates the sql database//
@@ -244,18 +264,25 @@ app.put('/api/cart/:productId' , verifyToken , (req , res)=>{
    })
 })
 
-app.post('/api/userProfile', verifyToken, (req, res) => {
-    const { fullName, age, sex, nationality } = req.body;
+app.post('/api/userProfile', verifyToken , upload.single('imageURL'), (req, res) => { // upload.single tells multer to hanlde the upload of a single file 
+    const { fullName, age, sex, nationality} = req.body;
     console.log(req.body);
+    let imageURL = null;
+
+    if(req.file){
+        imageURL = `/uploads/${req.file.filename}`
+    }
+
+    console.log(imageURL);
 
     // Insert user profile data into the database without the imageURL
-    const query = 'INSERT INTO userProfile (userId, fullName, age, sex, nationality) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [req.userId, fullName, age, sex, nationality], (err, result) => {
+    const query = 'INSERT INTO userProfile (userId, fullName, age, sex, nationality , imageURL) VALUES (?, ?, ?, ?, ?, ?)';
+    db.query(query, [req.userId, fullName, age, sex, nationality,imageURL], (err, result) => {
         if (err) {
             res.status(500).json({ error: 'Error posting the user details' });
             return;
         }
-        res.status(201).json({ userId: req.userId, fullName, age, sex, nationality });
+        res.status(201).json({ userId: req.userId, fullName, age, sex, nationality , imageURL });
     });
 });
 
@@ -272,6 +299,8 @@ app.get('/api/userProfile' , verifyToken , (req,res)=>{
         res.json(result);
     })
 })
+
+
 
 
 app.listen(port ,()=>{

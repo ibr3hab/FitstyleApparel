@@ -15,28 +15,28 @@ const UserProfile = ()=>{
         sex : '',
     })
     const [userCard , setUserCard ] = useState([]);
-    // const [imagePreview , setImagePreview] = useState(null);
+    const [imagePreview , setImagePreview] = useState(null);
+    const [imageFile , setImageFile] = useState(null);
     
 
 
-    const fetchProducts = async()=>{
-    try{
+    const fetchProducts = async () => {
+      try{
         const response = await fetch('/api/userProfile' , {
-            headers : {
-                'Authorization' : `Bearer ${localStorage.getItem('token')}`
-            }
+          headers : {
+            'Authorization' : `Bearer ${localStorage.getItem('token')}`
+          },
         })
-        if(!response.ok){
-            throw new Error("Error fetching the data");
-        }
         const data = await response.json();
-        console.log("The output",data); 
         setUserCard(data);
-    }catch(err){
-        console.error("Error getting the data of the of the users");
+        console.log("The profiles",data);
+      }
+      catch(err){
+        console.error("Error fetching the products",err);
+      }
     }
-   }
 
+    
  
 
    useEffect(()=>{
@@ -52,24 +52,25 @@ const UserProfile = ()=>{
             [name] : value,
            }))
     }
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Send the user profile data to the backend without the image part
+            const formData = new FormData();
+            formData.append('fullName',userProfile.fullName)
+            formData.append('age',userProfile.age)
+            formData.append('nationality',userProfile.nationality)
+            formData.append('sex',userProfile.sex)
+            if(imageFile){
+              formData.append('imageURL',imageFile);
+            }
             const response = await fetch('/api/userProfile', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify({
-                    fullName: userProfile.fullName,
-                    age: userProfile.age,
-                    nationality: userProfile.nationality,
-                    sex: userProfile.sex,
-                }),
+                body: formData
             });
     
             if (!response.ok) {
@@ -88,19 +89,22 @@ const UserProfile = ()=>{
                 nationality: '',
                 sex: '',
             });
+            setImageFile(null);
+            setImagePreview(null);
         }
     };
+
+    
     
 
-    // const handleImage = (e)=>{
-    //     const file = e.target.files[0];
-    //     if(file){
-    //         const url = URL.createObjectURL(file);
-    //         console.log('Image Preview URL:', url); // Debug: Check the generated preview URL
-    //         setImagePreview(url);
-    //     }
-
-    // }
+    const handleImage = (e)=>{
+      const file = e.target.files[0];
+      if(file){
+        const url = URL.createObjectURL(file);
+        setImagePreview(url);
+        setImageFile(file);
+      }
+    }
 
 
     return (
@@ -139,9 +143,10 @@ const UserProfile = ()=>{
                       required
                     />
                   </FormControl>
-                  {/* <FormControl>
-                    <Input type="file" accept="image/*" onChange={handleImage} />
-                  </FormControl> */}
+                  <FormControl>
+                    <Input type="file" accept="image/*" name="imageURL" onChange={handleImage} />
+                    {imagePreview && <img src={imagePreview} alt="Preview"/>}
+                  </FormControl>
                   <FormControl>
                     <Select value={userProfile.sex} onChange={handleChange} name="sex">
                       <InputLabel>Sex</InputLabel>
@@ -157,7 +162,7 @@ const UserProfile = ()=>{
             {userCard.map((user) => (
               <div className="userCard" key={user.userId}>
                 <PersonIcon />
-                {/* {user.image && <img src={user.image} alt={user.fullname} />} */}
+                {user.imageURL && <img src={user.imageURL} alt={user.fullName}/>}
                 <Typography variant="subtitle1">Full Name: {user.fullName}</Typography>
                 <Typography variant="subtitle1">Age: {user.age}</Typography>
                 <Typography variant="subtitle1">Nationality: {user.nationality}</Typography>
