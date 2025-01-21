@@ -5,26 +5,46 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            fetch('http://localhost:5000/api/auth/validate', {
-                headers: {
-                    'Authorization': `Bearer ${token}` //The useEffect is used to validate the token and check if it is correct passed on //
+    // useEffect(() => {
+    //     const token = localStorage.getItem('token');
+    //     if (token) {
+    //         fetch('http://localhost:5000/api/auth/validate', {
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}` //The useEffect is used to validate the token and check if it is correct passed on //
                     
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.valid) {
-                    setUser(data.user);
-                } else {
-                    localStorage.removeItem('token');
-                }
-            })
-            .catch(err => console.error("Error fetching the data", err));
-        }
-    }, []);
+    //             }
+    //         })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             if (data.valid) {
+    //                 setUser(data.user);
+    //             } else {
+    //                 localStorage.removeItem('token');
+    //             }
+    //         })
+    //         .catch(err => console.error("Error fetching the data", err));
+    //     }
+    // }, []);
+
+        useEffect(()=>{
+            const token = localStorage.getItem('token');
+            if(token){
+                fetch('http://localhost:5000/api/auth/validate',{
+                    headers : {
+                        'Authorization' : `Bearer ${token}`
+                    }
+                })
+                .then(res=>res.json())
+                .then(data=>{
+                    if(data.valid){
+                        setUser(data.user)
+                    }else{
+                        localStorage.removeItem('token');
+                    }
+                })
+                .catch(err=> console.error("Error fetching the datils",err))
+            }
+        },[]);
 
     const login = async (email, password) => {
         try {

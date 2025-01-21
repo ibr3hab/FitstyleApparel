@@ -38,7 +38,7 @@ const LoginRegistration = ()=>{
                 }  
             }
              if(!success){
-                setError(isLogin ? "Error Logging in" : "Error Registering in");
+                setError(isLogin ? "Incorrect Username or Password" : "Error Registering in");
              }
         }catch(err){
             console.error("Unusual error occured",err)

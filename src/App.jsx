@@ -9,7 +9,8 @@ import HeaderAdmin from "./components/Header/HeaderAdmin";
 import Products from "./components/Products/Products";
 import { CartProvider } from "./Cart/CartContext";
 import Cart from "./Cart/Cart";
-import UserProfile from "./components/UserProfile/userProfile";
+import UserProfile from "./components/UserProfile/UserProfile";
+import { DescriptionProvider } from "./components/Products/Description&CC";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
   return(
     <CartProvider>
     <AuthProvider>
+    <DescriptionProvider> 
     <div>
      <MainHeader/>
    <Routes>
@@ -42,6 +44,7 @@ function App() {
    <Route path="/userProfile" element={<UserProfile/>}/>
     </Routes>
     </div>
+    </DescriptionProvider> 
     </AuthProvider>
     </CartProvider>
   )

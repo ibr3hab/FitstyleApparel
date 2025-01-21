@@ -5,6 +5,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useCart } from "../../Cart/CartContext";
+import { useDesc } from "./Description&CC";
 
 
 
@@ -14,8 +15,7 @@ const Products =()=>{
     const [products , setProduct] = useState([]);
     const [loading , setLoading] = useState(false);
     const [filteredProduct , setFilteredProduct] = useState([])
-    const [isDescription , setiSDescription] = useState({});
-    const [count , setCount] = useState({});
+    const {countCart , descriptionVisible , count , isDescription} = useDesc();
     const {addToCart} = useCart();
     const [page , setPage] = useState(1);
     const productPerPage = 10;
@@ -77,20 +77,7 @@ const Products =()=>{
     
     } 
 
-   
-    const descriptionVisible = (id)=>{
-      setiSDescription((prevValue)=>({
-        ...prevValue , 
-        [id] : !prevValue[id]
-      }))
-    }
-
-    const countCart = (id)=>{
-      setCount((prevValue)=>({
-        ...prevValue , 
-        [id] : prevValue[id] ? prevValue[id] + 1 : 1,
-      }))
-    }
+  
     const handlePaginated = (event ,value)=>{
       setPage(value);
     }
@@ -157,7 +144,7 @@ const Products =()=>{
 
            </div>
            <div className="footy-card">
-          {  filteredProduct.length > 0 ?( filteredProduct.map((pro)=>(
+          {filteredProduct.length > 0 ?( filteredProduct.map((pro)=>(
             <div className="card" key={pro.id}>
                <img src={pro.imageURL} alt={pro.name}/>
         <p>{pro.name}</p>

@@ -5,6 +5,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useCart } from "../../Cart/CartContext";
 import "./home.css";
+import { useDesc } from "../Products/Description&CC";
 
 
  
@@ -13,9 +14,8 @@ const HomePage = ()=>{
      
     const [products , setProducts] = useState([]);
     const [loading , setLoading] = useState(false);
-    const [count , setCount] = useState({});
-    const [isDescription, setiSDescription] = useState({});
     const {addToCart} = useCart();
+    const {isDescription , count , countCart , descriptionVisible } = useDesc(); 
 
 
 
@@ -44,24 +44,6 @@ const HomePage = ()=>{
         fetchProducts();
     },[])
 
-
-    const countCart = (id)=>{
-
-        setCount((prevValue)=>({
-            ...prevValue,
-            [id] : prevValue[id] ? prevValue[id] + 1 : 1,
-        }))
-    }    
-
-
-    const descriptionVisible  = (id)=>{
-
-
-        setiSDescription((prevValue)=>({
-            ...prevValue,
-            [id] : !prevValue[id],
-        }))
-    }
       if (loading) {
                 return (
                   <div

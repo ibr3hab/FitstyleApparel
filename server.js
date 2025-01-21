@@ -17,18 +17,32 @@ const JWT_SECRET = 'supersecretkey$12345!jwt_secret';
 
 app.use(cors());
 app.use(express.json());
+// app.use('/uploads',express.static('uploads'));
+
+// const storage = multer.diskStorage({  //Configuring multer to store the files in a specific location using destination callback
+//     destination : (req, file , cb)=>{
+//         cb(null , 'uploads/') // save the files in the uploads directory
+//     },
+//     filename: (req,file,cb)=>{
+//         cb(null ,Date.now() + path.extname(file.originalname)) // save with the unique filename 
+//     }
+// })
+
+// const upload = multer({storage : storage})
+
 app.use('/uploads',express.static('uploads'));
 
-const storage = multer.diskStorage({  //Configuring multer to store the files in a specific location using destination callback
-    destination : (req, file , cb)=>{
-        cb(null , 'uploads/') // save the files in the uploads directory
-    },
-    filename: (req,file,cb)=>{
-        cb(null ,Date.now() + path.extname(file.originalname)) // save with the unique filename 
-    }
+const storage = multer.diskStorage({
+          destination : (req,file,cb)=>{
+            cb(null , 'uploads/')
+          },
+          filename : (req,file,cb)=>{
+            cb(null , Date.now() + path.extname(file.originalname));
+          }
+
 })
 
-const upload = multer({storage : storage})
+const upload =    multer({storage : storage})
 
 
 
