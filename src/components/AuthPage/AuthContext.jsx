@@ -5,31 +5,11 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
-    //     if (token) {
-    //         fetch('http://localhost:5000/api/auth/validate', {
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}` //The useEffect is used to validate the token and check if it is correct passed on //
-                    
-    //             }
-    //         })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             if (data.valid) {
-    //                 setUser(data.user);
-    //             } else {
-    //                 localStorage.removeItem('token');
-    //             }
-    //         })
-    //         .catch(err => console.error("Error fetching the data", err));
-    //     }
-    // }, []);
 
         useEffect(()=>{
             const token = localStorage.getItem('token');
             if(token){
-                fetch('http://localhost:5000/api/auth/validate',{
+                fetch('http://localhost:5001/api/auth/validate',{
                     headers : {
                         'Authorization' : `Bearer ${token}`
                     }
@@ -48,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await fetch('http://localhost:5000/api/auth/login', {
+            const res = await fetch('http://localhost:5001/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }) 
@@ -69,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password) => {
         try {
-            const res = await fetch('http://localhost:5000/api/auth/register', {
+            const res = await fetch('http://localhost:5001/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password }) 

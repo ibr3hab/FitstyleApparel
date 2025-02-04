@@ -19,36 +19,30 @@ const LoginRegistration = ()=>{
     const [error , setError] = useState(null);
     const {login , register} = useAuth();
     const [showPassword , setShowPassword] = useState(false);
+     
 
-
-
-    const handleSubmit  = async(e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault();
         try{
             let success;
             if(isLogin){
-                success = await login(email , password)
+                success = await login(email , password);
                 if(success){
                     history('/home');
                 }
             }else{
-                success = await register(name , email , password)
+                success = await register(name , email , password);
                 if(success){
                     history('/');
-                }  
+                }
             }
-             if(!success){
-                setError(isLogin ? "Incorrect Username or Password" : "Error Registering in");
-             }
+            if(!success){
+                setError(isLogin ? "Incorrect Username and password" : "Error trying to register");
+            }
         }catch(err){
-            console.error("Unusual error occured",err)
+            console.error("Error trying to get to the homepage",err);
         }
-
-        setEmail('');
-        setName('');
-        setPassword('');
     }
-
 
 
 

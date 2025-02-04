@@ -11,7 +11,7 @@ export const CartProvider = ({children})=>{
 
  const fetchCart = async()=>{
     try{
-    const response = await fetch('http://localhost:5000/api/cart',{
+    const response = await fetch('http://localhost:5001/api/cart',{
         headers :{
             'Authorization' : `Bearer ${localStorage.getItem('token')}`
         }
@@ -35,7 +35,7 @@ export const CartProvider = ({children})=>{
 
  const addToCart = async(productId , quantity)=>{
      try{
-        const response = await fetch('http://localhost:5000/api/cart',{
+        const response = await fetch('http://localhost:5001/api/cart',{
             method : 'POST',
             headers : {
               'Content-Type' : 'application/json',
@@ -50,10 +50,10 @@ export const CartProvider = ({children})=>{
         console.error("Error adding to the cart",err);
      }
  }
-
+ 
  const updateCart = async(productId , quantity)=>{
     try{
-        const response = await fetch(`http://localhost:5000/api/cart/${productId}`,{
+        const response = await fetch(`http://localhost:5001/api/cart/${productId}`,{
             method : "PUT",
             headers : {
                 'Content-Type' : 'application/json',
@@ -75,7 +75,7 @@ export const CartProvider = ({children})=>{
 const deleteCart = async (productId)=>{
     console.log("Product Id : ",productId);
     try{
-    const response = await fetch(`http://localhost:5000/api/cart/${productId}`,{
+    const response = await fetch(`http://localhost:5001/api/cart/${productId}`,{
         method : "DELETE",
         headers : {
             'Content-Type' : 'application/json',

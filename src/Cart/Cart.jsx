@@ -83,8 +83,8 @@ const Cart = ()=>{
                 <div className="cart-container">
                   {/* Cart Items on the Right */}
                   <div className="cart-items">
-                    {cart.map((product) => (
-                      <div className="card" key={product.productId}>
+                    {cart.map((product , index) => (
+                      <div className="card" key={`${product.productId}-${index}`}>
                         <img src={product.imageURL} alt={product.name} />
                         <div className="content">
                           <p>{product.name}</p>

@@ -9,7 +9,7 @@ import path from 'path';
 
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const JWT_SECRET = 'supersecretkey$12345!jwt_secret';
 
 
@@ -18,17 +18,6 @@ const JWT_SECRET = 'supersecretkey$12345!jwt_secret';
 app.use(cors());
 app.use(express.json());
 // app.use('/uploads',express.static('uploads'));
-
-// const storage = multer.diskStorage({  //Configuring multer to store the files in a specific location using destination callback
-//     destination : (req, file , cb)=>{
-//         cb(null , 'uploads/') // save the files in the uploads directory
-//     },
-//     filename: (req,file,cb)=>{
-//         cb(null ,Date.now() + path.extname(file.originalname)) // save with the unique filename 
-//     }
-// })
-
-// const upload = multer({storage : storage})
 
 app.use('/uploads',express.static('uploads'));
 
@@ -137,7 +126,7 @@ res.json({ valid : true , user : req.userId})
 
 
 
-app.post('/api/products',verifyToken,(req,res)=>{
+app.post('/api/products',verifyToken,(req,res)=>{   
 
     const {name , price , description , imageURL } = req.body;
     
@@ -220,17 +209,16 @@ app.post('/api/cart' , verifyToken , (req,res)=>{
     const {productId , quantity} = req.body;
     console.log(req.body);
 
-    const query = "INSERT INTO cart (userId , productId , quantity) VALUES (?,?,?) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
+    const query = "INSERT INTO cart (userId , productId , quantity ,name) VALUES (?,?,?,(SELECT name FROM products WHERE id =?)) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
                  //The above SQL command is used add my userId , productId quantity to the cart and on updating the cart the quantity will get updated //
 
-    db.query(query , [req.userId , productId , quantity] , (err , result)=>{
+    db.query(query , [req.userId , productId , quantity , productId] , (err , result)=>{
       if(err){
         res.status(500).json({error : "Error adding the product to the cart from backend"});
         return
       }
       
       res.status(201).json({userId : req.userId , productId , quantity});
-      console.log("Post request success")
     })
 })
 
@@ -249,33 +237,60 @@ app.get('/api/cart', verifyToken , (req,res)=>{
 })
 
 
-app.delete('/api/cart/:productId'  , verifyToken , (req , res)=>{
+// app.delete('/api/cart/:productId'  , verifyToken , (req , res)=>{
     
-    const query = "DELETE FROM cart WHERE userId = ? AND productId = ? ";
+//     const query = "DELETE FROM cart WHERE userId = ? AND productId = ? ";
    
-  db.query(query ,  [req.userId ,req.params.productId] , (err , result)=>{
-      if(err){
-        res.status(500).json({error : "Error deleteing the product from cart"})
-        return
-      }
-      res.json({message : "Product deleted from cart successfully"})
-  })
+//   db.query(query ,  [req.userId ,req.params.productId] , (err , result)=>{
+//       if(err){
+//         res.status(500).json({error : "Error deleteing the product from cart"})
+//         return
+//       }
+//       res.json({message : "Product deleted from cart successfully"})
+//   })
+// })
+
+// app.put('/api/cart/:productId' , verifyToken , (req , res)=>{
+
+//     const {quantity} = req.body ;
+
+//     const query = 'UPDATE cart set quantity = ? WHERE userId = ?  AND productId = ?'
+
+//    db.query(query , [quantity , req.userId , req.params.productId] , (err,result)=>{
+//     if(err){
+//         res.status(500).json({error : 'Not able to update cart'})
+//         return
+//     }
+//     res.json({message : "Cart updated successfully"});
+
+//    })
+// })
+
+app.delete('/api/cart/:productId',verifyToken,(req,res)=>{
+    const query = "DELETE FROM cart WHERE userId = ? AND productId = ?"
+    
+    db.query(query,[req.userId , req.params.productId],(err , result)=>{
+        if(err){
+        res.status(500).json({error : "Error deleting from the backend"});
+}})
+
+res.json({message : 'Product deleted successfully'});
 })
 
-app.put('/api/cart/:productId' , verifyToken , (req , res)=>{
+app.put('/api/cart/:productId', verifyToken , (req,res)=>{
 
-    const {quantity} = req.body ;
+    const {quantity} = req.body;
 
-    const query = 'UPDATE cart set quantity = ? WHERE userId = ?  AND productId = ?'
+    const query = "UPDATE cart set quantity = ? WHERE userId = ? AND productId = ?"
 
-   db.query(query , [quantity , req.userId , req.params.productId] , (err,result)=>{
-    if(err){
-        res.status(500).json({error : 'Not able to update cart'})
-        return
+    db.query(query , [quantity , req.userId , req.params.productId] , (err , result)=>{
+     if(err){
+      res.status(500).json({error : "Error in updating the data"})    
     }
-    res.json({message : "Cart updated successfully"});
+    
+    res.json({message : "Product updated successfully;"})
 
-   })
+    })
 })
 
 app.post('/api/userProfile', verifyToken , upload.single('imageURL'), (req, res) => { // upload.single tells multer to hanlde the upload of a single file 

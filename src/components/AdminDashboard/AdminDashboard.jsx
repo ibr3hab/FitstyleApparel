@@ -31,7 +31,7 @@ const AdminDashboard = ()=>{
     const fetchProducts = async()=>{
 
         try{
-            const response = await fetch('http://localhost:5000/api/products')
+            const response = await fetch('http://localhost:5001/api/products')
             const data = await response.json();
             setProducts(data);
         }catch(err){
@@ -47,7 +47,7 @@ const AdminDashboard = ()=>{
     const handleUpdateProduct = async(e)=>{
         e.preventDefault();
         try{
-            const response = await fetch( `http://localhost:5000/api/products/${editingProduct.id}` , {
+            const response = await fetch( `http://localhost:5001/api/products/${editingProduct.id}` , {
                 method : "PUT",
                 headers : {
                     'Content-Type' : 'application/json',
@@ -71,7 +71,7 @@ const AdminDashboard = ()=>{
         console.log("Product ID to delete:", id)
         if(window.confirm("Are you sure you want to delete this product")){
             try{
-                const response = await fetch(`http://localhost:5000/api/products/${id}`,{
+                const response = await fetch(`http://localhost:5001/api/products/${id}`,{
                     method : 'DELETE',
                     headers : {
                         'Content-Type' : 'application/json',
@@ -96,7 +96,7 @@ const AdminDashboard = ()=>{
           e.preventDefault();
 
           try{
-            const response = await fetch(`http://localhost:5000/api/products`,{
+            const response = await fetch(`http://localhost:5001/api/products`,{
                 method : 'POST',
                 headers : {
                     'Content-Type' : 'application/json',
