@@ -1,22 +1,19 @@
 import React , {useState , useEffect} from "react";
-import "./products.css";
 import { OutlinedInput , Button , Typography, FormControl , CircularProgress, IconButton , Stack , Pagination } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import { useCart } from "../../Cart/CartContext";
-import { useDesc } from "./Description&CC";
+import "../Products/products.css";
 
 
 
-const Products =()=>{
+
+const Author =()=>{
 
     const [query , setQuery] = useState('');
     const [products , setProduct] = useState([]);
     const [loading , setLoading] = useState(false);
-    const [filteredProduct , setFilteredProduct] = useState([])
-    const {countCart , descriptionVisible , count , isDescription} = useDesc();
-    const {addToCart} = useCart();
+    const [filteredProduct , setFilteredProduct] = useState([]);
+    const [isDescription , setIsDescription] =useState({})
     const [page , setPage] = useState(1);
     const productPerPage = 10;
 
@@ -28,7 +25,7 @@ const Products =()=>{
 
         setLoading(true);
         try{
-            const response = await fetch('http://localhost:5001/api/books')
+            const response = await fetch('http://localhost:5001/api/author')
             if(!response.ok){
                throw new Error("My products are not being fetched from the api");
             }
@@ -82,6 +79,15 @@ const Products =()=>{
       setPage(value);
     }
 
+    const descriptionVisible = (id)=>{
+
+        setIsDescription((prevValue)=>({
+          ...prevValue,
+          [id] : !prevValue[id]
+        }
+        ))
+    }
+
    
 
         if (loading) {
@@ -104,7 +110,7 @@ const Products =()=>{
            <div>
             <div className="formhandle">
            <form onSubmit={handleFilteredProduct}>
-           <Typography variant="h6">Books</Typography>
+           <Typography variant="h6">Author</Typography>
            <FormControl>
            <OutlinedInput
            name="name"
@@ -140,15 +146,11 @@ const Products =()=>{
           {filteredProduct.length > 0 ?( filteredProduct.map((pro)=>(
             <div className="card" key={pro.id}>
         <p>{pro.name}</p>
-        <p>€{pro.price}</p>
+        <p>€{pro.famousbooks}</p>
         <IconButton onClick={()=>descriptionVisible(pro.id)}>
         {isDescription[pro.id] ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
         </IconButton>
         <p>{isDescription[pro.id] && pro.description}</p>
-        <Button onClick={()=>addToCart(pro.id , count[pro.id] || 1)}>Add To Cart </Button>
-        <IconButton onClick={()=>countCart(pro.id)}>
-         <AddShoppingCartIcon/> {count[pro.id] > 0 ? count[pro.id] :''} 
-        </IconButton>
               </div>
            ))) : (<Typography>No products found</Typography>)}
           </div>
@@ -162,4 +164,4 @@ const Products =()=>{
 
 
 
-export default Products;
+export default Author;

@@ -1,7 +1,8 @@
+
+
+
 import React , {useState , useEffect} from "react";
-import { useAuth } from "../AuthPage/AuthContext";
 import { OutlinedInput , Button , FormControl ,  InputAdornment , Typography , Box } from "@mui/material";
-import CurrencyPoundIcon from '@mui/icons-material/CurrencyPound';
 import { TextareaAutosize } from '@mui/base';
 import "./admin.css"
 import Inventory2Icon from '@mui/icons-material/Inventory2';
@@ -9,16 +10,16 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 
 
 
-const AdminDashboard = ()=>{
+const AdminAuthor = ()=>{
 
     const [products , setProducts] = useState([]);
     const [editingProduct , setEditingProduct] = useState(null);
     const [newProducts , setNewProducts] = useState({
         name : '',
         description : '',
-        price : '',
+        famousbooks : ''
     })
-    const {user , logout} = useAuth();
+    
 
 
 
@@ -30,7 +31,7 @@ const AdminDashboard = ()=>{
     const fetchProducts = async()=>{
 
         try{
-            const response = await fetch('http://localhost:5001/api/books')
+            const response = await fetch('http://localhost:5001/api/author')
             const data = await response.json();
             setProducts(data);
         }catch(err){
@@ -46,7 +47,7 @@ const AdminDashboard = ()=>{
     const handleUpdateProduct = async(e)=>{
         e.preventDefault();
         try{
-            const response = await fetch( `http://localhost:5001/api/books/${editingProduct.id}` , {
+            const response = await fetch( `http://localhost:5001/api/author/${editingProduct.id}` , {
                 method : "PUT",
                 headers : {
                     'Content-Type' : 'application/json',
@@ -70,7 +71,7 @@ const AdminDashboard = ()=>{
         console.log("Product ID to delete:", id)
         if(window.confirm("Are you sure you want to delete this product")){
             try{
-                const response = await fetch(`http://localhost:5001/api/books/${id}`,{
+                const response = await fetch(`http://localhost:5001/api/author/${id}`,{
                     method : 'DELETE',
                     headers : {
                         'Content-Type' : 'application/json',
@@ -95,7 +96,7 @@ const AdminDashboard = ()=>{
           e.preventDefault();
 
           try{
-            const response = await fetch(`http://localhost:5001/api/books`,{
+            const response = await fetch(`http://localhost:5001/api/author`,{
                 method : 'POST',
                 headers : {
                     'Content-Type' : 'application/json',
@@ -105,7 +106,7 @@ const AdminDashboard = ()=>{
             })
           if(response.ok){
               fetchProducts();
-              setNewProducts({name : '' , description : '' , price : ''})
+              setNewProducts({name : '' , description : '' , famousbooks :''})
           }else{
             console.error("Error creating the product ");
           }
@@ -114,9 +115,6 @@ const AdminDashboard = ()=>{
         }
     }
 
-    if(!user){
-     return <div>Access denied</div>
-    }
 
     const handleChange =(e)=>{
       const {name,value} = e.target;
@@ -132,7 +130,7 @@ const AdminDashboard = ()=>{
     return(
         <div className="grid">
           <form onSubmit={handleCreateProduct}>
-          <Typography variant="h6"> Create a New Book  <Inventory2Icon/></Typography>
+          <Typography variant="h6"> Create a New Author <Inventory2Icon/></Typography>
            <FormControl>
            <OutlinedInput
             name = "name"
@@ -144,16 +142,11 @@ const AdminDashboard = ()=>{
              </FormControl>
              <FormControl>
             <OutlinedInput
-             startAdornment={
-                <InputAdornment position="start">
-                    <CurrencyPoundIcon/>
-                </InputAdornment>
-             }
-            name = "price"
-            type = "number"
-            value = {newProducts.price}
+            name = "famousbooks"
+            type = "text"
+            value = {newProducts.famousbooks}
             onChange = {handleChange}
-            placeholder = "Price"
+            placeholder = "Famous Books"
             />
              </FormControl>
              <FormControl>
@@ -166,18 +159,19 @@ const AdminDashboard = ()=>{
             placeholder="Description"/>
            
             <Button type="submit">
-                Create Book
+                Create Product
             </Button>
             </FormControl>
            </form>
            <div className="tablecss">
-           <Typography variant="h6">Books</Typography>
+           <Typography variant="h6">Authors</Typography>
   <table style={{ width: '60%', borderCollapse: 'collapse' }}>
     <thead>
       <tr style={{ textAlign: 'left', fontWeight: 'bold' }}>
         <th>Id</th>
         <th>Name</th>
-        <th>Price</th>
+        <th>Description</th>
+        <th>Famous Books</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -186,7 +180,8 @@ const AdminDashboard = ()=>{
             <tr key={product.id}>
                 <td>{product.id}</td>
                 <td>{product.name}</td>
-            <td>€{product.price}</td>
+            <td>{product.description}</td>
+            <td>{product.famousbooks    }</td>
                 <td><Button onClick={()=>handleEditProduct(product)}>Edit</Button>
                     <Button onClick={()=>handleDeleteProduct(product.id)}>Delete</Button>
                     </td>
@@ -198,7 +193,7 @@ const AdminDashboard = ()=>{
     </div>
     {editingProduct && (
         <div>
-              <Typography variant="h6">Edit the Book</Typography>
+              <Typography variant="h6">Edit the Product</Typography>
             <form onSubmit={handleUpdateProduct}>
           
               <OutlinedInput
@@ -209,9 +204,9 @@ const AdminDashboard = ()=>{
                 required
               />
               <OutlinedInput   
-                type="number"
-                value={editingProduct.price}
-                onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
+                type="text"
+                value={editingProduct.famousbooks}
+                onChange={(e) => setEditingProduct({ ...editingProduct, famousbooks: e.target.value })}
                 className="w-full mb-2 p-2 border rounded"
                 required
               />
@@ -239,5 +234,7 @@ const AdminDashboard = ()=>{
 
 }
 
-export default AdminDashboard;
+export default AdminAuthor;
+
+
 

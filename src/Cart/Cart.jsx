@@ -85,7 +85,6 @@ const Cart = ()=>{
                   <div className="cart-items">
                     {cart.map((product , index) => (
                       <div className="card" key={`${product.productId}-${index}`}>
-                        <img src={product.imageURL} alt={product.name} />
                         <div className="content">
                           <p>{product.name}</p>
                           <p>€{product.price}</p>

@@ -17,7 +17,7 @@ const Header = ()=>{
     const {logout} = useAuth();
     
     
-    const pages = ['Home' , 'Products' , 'Cart' ];
+    const pages = ['Home' , 'Books' , 'Cart' , 'Author' ];
 
 
     const handleOpenNav = (event) => {
@@ -57,7 +57,7 @@ const Header = ()=>{
            </Link>
 
                  <Typography variant="h6">
-                  FitStyle Apparel
+                  Bookinder 
                  </Typography>    
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, display: { xs: 'none', md: 'flex', marginLeft :'auto'} }}>

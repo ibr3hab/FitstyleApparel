@@ -25,8 +25,9 @@ const AdminLoginPage = ()=>{
             try{
                 const success = await login(email , password);
                 if(success){
-                    history('/admin-dashboard')
-                }else{
+                    history('/admin-dashboard') 
+                } 
+                else{
                     history('/admin')
                 }
             }catch(err){
@@ -48,7 +49,7 @@ const AdminLoginPage = ()=>{
                              
                 
                                  <Typography variant="h6">
-                                  FitStyle Apparel
+                                  Bookinder
                                  </Typography>    
                                 </Box>
                   <Typography variant="h6">Admin Dashboard</Typography>

@@ -57,7 +57,7 @@ const LoginRegistration = ()=>{
                  
     
                      <Typography variant="h6">
-                      FitStyle Apparel
+                      Bookinder
                      </Typography>    
                     </Box>
       <Typography variant="h6">{isLogin ? 'Login' : 'Register'}</Typography>

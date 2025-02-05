@@ -3,7 +3,7 @@ import LoginRegistration from "./components/AuthPage/LoginRegsitrationPage";
 import { AuthProvider } from "./components/AuthPage/AuthContext";
 import { Route , Routes , useLocation} from "react-router-dom";
 import AdminLoginPage from "./components/AuthPage/AdminLoginPage";
-import AdminDashboard from "./components/AdminDashboard/admindashboard"
+import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
 import Header from "./components/Header/Header";
 import HeaderAdmin from "./components/Header/HeaderAdmin";
 import Products from "./components/Products/Products";
@@ -11,7 +11,8 @@ import { CartProvider } from "./Cart/CartContext";
 import Cart from "./Cart/Cart";
 import UserProfile from "./components/UserProfile/UserProfile";
 import { DescriptionProvider } from "./components/Products/Description&CC";
-
+import AdminAuthor from "./components/AdminDashboard/AdminAuthor";
+import Author from "./components/Author/Author";
 
 function App() {
 
@@ -20,7 +21,11 @@ function App() {
  const MainHeader  = ()=>{
   if(location.pathname === '/admin-dashboard'){
     return <HeaderAdmin/>
-  }else if (location.pathname === '/' || location.pathname === '/admin'){
+  }
+  else if(location.pathname === '/admin-dashboard/author'){
+    return <HeaderAdmin/>
+  }
+  else if (location.pathname === '/' || location.pathname === '/admin'){
     return null;
   }else{
     return <Header/>
@@ -39,7 +44,9 @@ function App() {
    <Route path="/home" element={<HomePage/>}/>
    <Route path="/admin" element={<AdminLoginPage/>}/>
    <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
-   <Route path="/products" element={<Products/>}/>
+   <Route path="/admin-dashboard/author" element={<AdminAuthor/>}/>
+   <Route path="/author" element={<Author/>}/>
+   <Route path="/books" element={<Products/>}/>
    <Route path="/cart" element={<Cart/>}/>
    <Route path="/userProfile" element={<UserProfile/>}/>
     </Routes>

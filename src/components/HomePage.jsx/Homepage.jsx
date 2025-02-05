@@ -24,7 +24,7 @@ const HomePage = ()=>{
 
 
        try{
-        const response = await fetch('http://localhost:5001/api/products')
+        const response = await fetch('http://localhost:5001/api/books')
         if(!response.ok){
             throw new Error("The products cannot be fetched");
         }
@@ -62,16 +62,12 @@ const HomePage = ()=>{
      return(
 
   
-       <div>
-       <div>
-       <img src="../public/39218987724.jpg" alt="banner-image"  className="banner-image"/>
-       </div>  
+       <div> 
        <div className="product-card">
-        <Typography variant="h5">Featured Products</Typography>
+        <Typography variant="h5">Featured Books</Typography>
         <div className="scroll-container">
         {products.map((pro)=>(
           <div className="card" key={pro.id}>
-             <img src={pro.imageURL} alt={pro.name} className="productimg"/>
       <p>{pro.name}</p>
       <p>€{pro.price}</p>
       <IconButton onClick={()=>descriptionVisible(pro.id)}>

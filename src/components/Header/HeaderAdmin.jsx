@@ -2,7 +2,7 @@ import React from "react";
 import { AppBar, Container, Toolbar , Box , Typography ,Button } from '@mui/material';
 import { useAuth } from "../AuthPage/AuthContext";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 
 
 
@@ -36,6 +36,18 @@ const handleLogout =  ()=>{
                  </Typography> 
                  </Box>
                  <Box  sx={{marginLeft : 'auto'}}>
+                 <Button
+                ><Link to={"/admin-dashboard"}
+                style={{textDecoration :'none' , color : 'white'
+                }}
+                >Books</Link>
+                    </Button>
+                    <Button
+                ><Link to={"/admin-dashboard/author"}
+                style={{textDecoration :'none' , color : 'white'
+                }}
+                >Author</Link>
+                    </Button>
                  
                  <Button onClick={handleLogout}
                     style={{ color : 'inherit'}}

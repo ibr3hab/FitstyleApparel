@@ -125,24 +125,24 @@ res.json({ valid : true , user : req.userId})
 })
 
 
+//author//
+app.post('/api/author',verifyToken,(req,res)=>{   
 
-app.post('/api/products',verifyToken,(req,res)=>{   
-
-    const {name , price , description , imageURL } = req.body;
+    const {name , description , famousbooks } = req.body;
     
-    const query = 'INSERT INTO products (name , price , description ,imageURL) VALUES(?,?,?,?)'
+    const query = 'INSERT INTO author (name , description , famousbooks ) VALUES(?,?,?)'
     
-    db.query(query,[name , price , description , imageURL],(err,result)=>{
+    db.query(query,[name , description  , famousbooks],(err,result)=>{
         if(err){
             res.status(500).json({error : "Error getting the data"});
             return
         }
-        res.status(201).json({id:result.insertId , name , price , description , imageURL})
+        res.status(201).json({id:result.insertId , name , description , famousbooks })
     })
 })
 
-app.get('/api/products',(req,res)=>{
-    const query = "SELECT * FROM products";
+app.get('/api/author',(req,res)=>{
+    const query = "SELECT * FROM author";
     db.query(query , (err , result)=>{
         if(err){
             res.status(500).json({error: "Error fetching the data"});
@@ -152,8 +152,8 @@ app.get('/api/products',(req,res)=>{
     })
 })
 
-app.get('/api/products/:id',(req,res)=>{
-    const query = "SELECT * FROM products WHERE id = ?";
+app.get('/api/author/:id',(req,res)=>{
+    const query = "SELECT * FROM author WHERE id = ?";
 
     db.query(query , (err , results)=>{
         if(err){
@@ -166,12 +166,12 @@ app.get('/api/products/:id',(req,res)=>{
         })
     })
 
-app.put('/api/products/:id',verifyToken , (req,res)=>{
-    const {name , price , description , imageURL } = req.body;
+app.put('/api/author/:id',verifyToken , (req,res)=>{
+    const {name , description , famousbooks } = req.body;
 
-    const query = 'UPDATE products SET name = ? , price = ? , description = ? , imageURL= ? WHERE id = ?';
+    const query = 'UPDATE author SET name = ? ,  description = ? , famousbooks = ?  WHERE id = ?';
 
-    db.query(query, [name, price, description, imageURL, req.params.id], (err, result) => {
+    db.query(query, [name, description,famousbooks, req.params.id], (err, result) => {
         if (err) {
           res.status(500).json({ error: "Error updating the product" });
           return;
@@ -180,13 +180,90 @@ app.put('/api/products/:id',verifyToken , (req,res)=>{
           res.status(404).json({ error: "Product not found" });
           return;
         }
-        res.json({ id: req.params.id, name, price, description, imageURL });
+        res.json({ id: req.params.id, name, description , famousbooks });
       });     
 })    
 
 
-app.delete('/api/products/:id',verifyToken , (req,res)=>{
-    const query = 'DELETE FROM products WHERE id = ?';
+app.delete('/api/author/:id',verifyToken , (req,res)=>{
+    const query = 'DELETE FROM author WHERE id = ?';
+
+    db.query(query , req.params.id , (err , result)=>{
+        if(err){
+            res.status(500).json({error : "Error deleting the product"});
+            return
+        }
+        if(result.affectedRows === 0){
+            res.status(404).json({error : "Product not found"})
+        }
+
+        res.json({message : "Product deleted successfully"})
+
+    })
+})
+
+/////author ends////
+app.post('/api/books',verifyToken,(req,res)=>{   
+
+    const {name , price , description } = req.body;
+    
+    const query = 'INSERT INTO books (name , price , description ) VALUES(?,?,?)'
+    
+    db.query(query,[name , price , description ],(err,result)=>{
+        if(err){
+            res.status(500).json({error : "Error getting the data"});
+            return
+        }
+        res.status(201).json({id:result.insertId , name , price , description })
+    })
+})
+
+app.get('/api/books',(req,res)=>{
+    const query = "SELECT * FROM books";
+    db.query(query , (err , result)=>{
+        if(err){
+            res.status(500).json({error: "Error fetching the data"});
+        return
+        }
+        res.json(result);   
+    })
+})
+
+app.get('/api/books/:id',(req,res)=>{
+    const query = "SELECT * FROM books WHERE id = ?";
+
+    db.query(query , (err , results)=>{
+        if(err){
+            res.status(500).json({error : "Error in getting the data"})
+        }
+        if(results.length === 0){
+            res.status(404).json({error : "Product not found"});
+        }
+        res.json(results[0])
+        })
+    })
+
+app.put('/api/books/:id',verifyToken , (req,res)=>{
+    const {name , price , description } = req.body;
+
+    const query = 'UPDATE books SET name = ? , price = ? , description = ?  WHERE id = ?';
+
+    db.query(query, [name, price, description, req.params.id], (err, result) => {
+        if (err) {
+          res.status(500).json({ error: "Error updating the product" });
+          return;
+        }
+        if (result.affectedRows === 0) {
+          res.status(404).json({ error: "Product not found" });
+          return;
+        }
+        res.json({ id: req.params.id, name, price, description });
+      });     
+})    
+
+
+app.delete('/api/books/:id',verifyToken , (req,res)=>{
+    const query = 'DELETE FROM books WHERE id = ?';
 
     db.query(query , req.params.id , (err , result)=>{
         if(err){
@@ -204,12 +281,13 @@ app.delete('/api/products/:id',verifyToken , (req,res)=>{
 
 
 
+
 app.post('/api/cart' , verifyToken , (req,res)=>{
 
     const {productId , quantity} = req.body;
     console.log(req.body);
 
-    const query = "INSERT INTO cart (userId , productId , quantity ,name) VALUES (?,?,?,(SELECT name FROM products WHERE id =?)) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
+    const query = "INSERT INTO cart (userId , productId , quantity ,name) VALUES (?,?,?,(SELECT name FROM books WHERE id =?)) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
                  //The above SQL command is used add my userId , productId quantity to the cart and on updating the cart the quantity will get updated //
 
     db.query(query , [req.userId , productId , quantity , productId] , (err , result)=>{
@@ -224,7 +302,7 @@ app.post('/api/cart' , verifyToken , (req,res)=>{
 
 app.get('/api/cart', verifyToken , (req,res)=>{
 
-    const query = "SELECT c.productId , c.quantity , p.name , p.price , p.imageURL FROM cart c JOIN products p ON c.productId = p.id WHERE c.userId = ?"
+    const query = "SELECT c.productId , c.quantity , p.name , p.price  FROM cart c JOIN books p ON c.productId = p.id WHERE c.userId = ?"
                 // The query joins the field of both the tables cart and products by checking if the productId and id in the product table matches //
 
     db.query(query , [req.userId] , (err , results)=>{
